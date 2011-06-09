@@ -27,7 +27,7 @@ module Metrics
           
           # Integration Metrics
           @requests             = @agent.timer(:_requests)
-          @path_timers          = []
+          @path_timers          = {}
           @uncaught_exceptions  = @agent.counter(:_uncaught_exceptions)
           
           # HTTP Status Codes
@@ -46,7 +46,7 @@ module Metrics
           env['metrics.agent'] = @agent
           
           route = env["REQUEST_METHOD"]+"_"+env["PATH_INFO"]
-          route_timer = (self.path_timers[route] ||= @agent.timer(route.to_sym))
+          route_timer = (@path_timers[route] ||= @agent.timer(route.to_sym))
           
           status, headers, body = self.requests.time{ route_timer.time { @app.call(env) } }
           
