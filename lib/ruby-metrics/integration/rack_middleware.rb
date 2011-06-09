@@ -45,7 +45,7 @@ module Metrics
           
           env['metrics.agent'] = @agent
           
-          route = env["REQUEST_METHOD"]+"_"+env["PATH_INFO"]
+          route = env["REQUEST_METHOD"]+"_"+env["PATH_INFO"].gsub(/\d+/,"{numeric_parameter}")
           route_timer = (@path_timers[route] ||= @agent.timer(route.to_sym))
           
           status, headers, body = self.requests.time{ route_timer.time { @app.call(env) } }
